@@ -1,6 +1,7 @@
 """Compute the utility value of monetary quantities under prospect theory
 
 """
+from functools import partial
 
 
 def power_utility_loss_aversion(z, ɣ, λ):
@@ -16,16 +17,20 @@ def power_utility_loss_aversion(z, ɣ, λ):
 
 
 # Define the characteristics of the individual.
-power_coefficients = [0.5, 0.5]
-loss_aversion_coefficients = [2.0, 2.0]
+power_coefficient = 0.5
+loss_aversion_coefficient = 2.0
+
+# Define this individual's utility.
+individuals_utility = partial(
+    power_utility_loss_aversion, ɣ=power_coefficient, λ=loss_aversion_coefficient
+)
 
 # Define the monetary payoffs.
 payoffs = [500, -550]
 
-# Compute the utility values and print them to the screen.
-out = map(
-    power_utility_loss_aversion, payoffs, power_coefficients, loss_aversion_coefficients
-)
+# Set up the calculation of the utility values.
+out = map(individuals_utility, payoffs)
 
+# Carry out the computations and print them to the screen.
 for item in out:
     print(item)
