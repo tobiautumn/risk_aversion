@@ -1,17 +1,21 @@
 """Compute the utility value of monetary quantities under prospect theory
 
 """
-from functools import partial
 
 
-def power_utility_loss_aversion(z, ɣ, λ):
-    """Return the utility evaluation of a monetary quantity z under power
-    utility with utility curvature parameter ɣ and loss aversion
-    parameter λ.
+def power_utility_loss_aversion(z_list, gamma, lambda_):
+    """Return the utility evaluation of a vector of monetary
+    quantities *z* under power utility with utility curvature
+    parameter *gamma* and loss aversion parameter *lambda_*.
 
     """
 
-    out = z ** (1 - ɣ) if z >= 0 else -λ * (-z) ** (1 - ɣ)
+    out = z_list
+    for i, z in enumerate(z_list):
+        if z >= 0:
+            out[i] = z ** (1 - gamma)
+        else:
+            out[i] = -lambda_ * (-z) ** (1 - gamma)
 
     return out
 
@@ -20,17 +24,16 @@ def power_utility_loss_aversion(z, ɣ, λ):
 power_coefficient = 0.5
 loss_aversion_coefficient = 2.0
 
-# Define this individual's utility.
-individuals_utility = partial(
-    power_utility_loss_aversion, ɣ=power_coefficient, λ=loss_aversion_coefficient
-)
-
 # Define the monetary payoffs.
 payoffs = [500, -550]
 
-# Set up the calculation of the utility values via list comprehension.
-out = [individuals_utility(payoff) for payoff in payoffs]
+# Compute the utility values
+evaluations = power_utility_loss_aversion(
+    payoffs, power_coefficient, loss_aversion_coefficient
+)
 
-# Carry out the computations and print them to the screen.
-for item in out:
-    print(item)
+# Print the utility values to the screen.
+print(evaluations)
+
+# Goal: Understand what happened here.
+print(payoffs)
